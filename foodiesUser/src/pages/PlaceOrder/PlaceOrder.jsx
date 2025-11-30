@@ -62,13 +62,17 @@ const PlaceOrder = () => {
 
     try {
       const response = await createOrder(orderData, token);
+      console.log("Create order response:", response);
+      console.log("Razorpay Key being used:", RAZORPAY_KEY);
       if (response.razorpayOrderId) {
         // initiate the payment
         initiateRazorpayPayment(response);
       } else {
+        console.error("No razorpayOrderId in response:", response);
         toast.error("Unable to place order. Please try again.");
       }
     } catch (error) {
+      console.error("Error creating order:", error);
       toast.error("Unable to place order. Please try again.");
     }
   };

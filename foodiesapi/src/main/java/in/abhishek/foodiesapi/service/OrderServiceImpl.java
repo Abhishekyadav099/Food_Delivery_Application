@@ -35,24 +35,33 @@ public class OrderServiceImpl implements OrderService{
 
     @Override
     public OrderResponse createOrderWithPayment(OrderRequest request) throws RazorpayException {
+        // Validate Razorpay credentials are set
+        if (RAZORPAY_KEY == null || RAZORPAY_KEY.isEmpty() || 
+            RAZORPAY_SECRET == null || RAZORPAY_SECRET.isEmpty()) {
+            throw new RazorpayException("RAZORPAY_KEY or RAZORPAY_SECRET not configured in environment variables");
+        }
+
         OrderEntity newOrder = convertToEntity(request);
         newOrder = orderRepository.save(newOrder);
 
+        try {
+            //create razorpay payment order
+            RazorpayClient razorpayClient = new RazorpayClient(RAZORPAY_KEY, RAZORPAY_SECRET);
+            JSONObject orderRequest = new JSONObject();
+            orderRequest.put("amount", newOrder.getAmount() * 100);
+            orderRequest.put("currency", "INR");
+            orderRequest.put("payment_capture", 1);
 
-        //create razorpay payment order
-        RazorpayClient razorpayClient = new RazorpayClient(RAZORPAY_KEY, RAZORPAY_SECRET);
-        JSONObject orderRequest = new JSONObject();
-        orderRequest.put("amount", newOrder.getAmount() * 100);
-        orderRequest.put("currency", "INR");
-        orderRequest.put("payment_capture", 1);
-
-        Order razorpayOrder = razorpayClient.orders.create(orderRequest);
-        newOrder.setRazorpayOrderId(razorpayOrder.get("id"));
-        //newOrder.setAmount(razorpayOrder.get("amount"));
-        String loggedInUserId = userService.findByUserId();
-        newOrder.setUserId(loggedInUserId);
-        newOrder = orderRepository.save(newOrder);
-        return convertToResponse(newOrder);
+            Order razorpayOrder = razorpayClient.orders.create(orderRequest);
+            newOrder.setRazorpayOrderId(razorpayOrder.get("id"));
+            //newOrder.setAmount(razorpayOrder.get("amount"));
+            String loggedInUserId = userService.findByUserId();
+            newOrder.setUserId(loggedInUserId);
+            newOrder = orderRepository.save(newOrder);
+            return convertToResponse(newOrder);
+        } catch (RazorpayException e) {
+            throw new RazorpayException("Failed to create Razorpay order: " + e.getMessage(), e);
+        }
     }
 
     @Override
