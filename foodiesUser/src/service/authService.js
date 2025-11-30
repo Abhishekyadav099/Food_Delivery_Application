@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "https://foodiesspringboot.onrender.com/api";
+const API_URL = "https://food-delivery-application-h2vx.onrender.com/api";
 
 export const registerUser = async (data) => {
   try {
