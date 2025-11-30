@@ -29,10 +29,94 @@ const PlaceOrder = () => {
     zip: "",
   });
 
+  // List of Indian states / union territories and some major cities for each
+  const STATES = [
+    "Andhra Pradesh",
+    "Arunachal Pradesh",
+    "Assam",
+    "Bihar",
+    "Chhattisgarh",
+    "Goa",
+    "Gujarat",
+    "Haryana",
+    "Himachal Pradesh",
+    "Jharkhand",
+    "Karnataka",
+    "Kerala",
+    "Madhya Pradesh",
+    "Maharashtra",
+    "Manipur",
+    "Meghalaya",
+    "Mizoram",
+    "Nagaland",
+    "Odisha",
+    "Punjab",
+    "Rajasthan",
+    "Sikkim",
+    "Tamil Nadu",
+    "Telangana",
+    "Tripura",
+    "Uttar Pradesh",
+    "Uttarakhand",
+    "West Bengal",
+    "Andaman and Nicobar Islands",
+    "Chandigarh",
+    "Dadra and Nagar Haveli and Daman and Diu",
+    "Delhi",
+    "Jammu and Kashmir",
+    "Ladakh",
+    "Lakshadweep",
+    "Puducherry",
+  ];
+
+  const CITIES = {
+    "Andhra Pradesh": ["Visakhapatnam", "Vijayawada", "Guntur", "Tirupati"],
+    "Arunachal Pradesh": ["Itanagar", "Pasighat"],
+    Assam: ["Guwahati", "Dibrugarh", "Jorhat"],
+    Bihar: ["Patna", "Gaya", "Bhagalpur"],
+    "Chhattisgarh": ["Raipur", "Bhilai", "Bilaspur"],
+    Goa: ["Panaji", "Margao"],
+    Gujarat: ["Ahmedabad", "Surat", "Vadodara", "Rajkot"],
+    Haryana: ["Gurgaon", "Faridabad", "Panipat", "Karnal"],
+    "Himachal Pradesh": ["Shimla", "Dharamshala"],
+    Jharkhand: ["Ranchi", "Jamshedpur", "Dhanbad"],
+    Karnataka: ["Bengaluru", "Mysuru", "Mangalore", "Hubli"],
+    Kerala: ["Thiruvananthapuram", "Kochi", "Kozhikode"],
+    "Madhya Pradesh": ["Bhopal", "Indore", "Gwalior"],
+    Maharashtra: ["Mumbai", "Pune", "Nagpur", "Nashik"],
+    Manipur: ["Imphal"],
+    Meghalaya: ["Shillong"],
+    Mizoram: ["Aizawl"],
+    Nagaland: ["Kohima"],
+    Odisha: ["Bhubaneswar", "Cuttack"],
+    Punjab: ["Chandigarh", "Ludhiana", "Amritsar"],
+    Rajasthan: ["Jaipur", "Jodhpur", "Udaipur"],
+    Sikkim: ["Gangtok"],
+    "Tamil Nadu": ["Chennai", "Coimbatore", "Madurai"],
+    Telangana: ["Hyderabad", "Warangal"],
+    Tripura: ["Agartala"],
+    "Uttar Pradesh": ["Lucknow", "Kanpur", "Varanasi", "Noida"],
+    Uttarakhand: ["Dehradun", "Rishikesh"],
+    "West Bengal": ["Kolkata", "Darjeeling", "Asansol"],
+    "Andaman and Nicobar Islands": ["Port Blair"],
+    Chandigarh: ["Chandigarh"],
+    "Dadra and Nagar Haveli and Daman and Diu": ["Daman", "Diu"],
+    Delhi: ["New Delhi", "Delhi"],
+    "Jammu and Kashmir": ["Srinagar", "Jammu"],
+    Ladakh: ["Leh"],
+    Lakshadweep: ["Kavaratti"],
+    Puducherry: ["Puducherry"],
+  };
+
   const onChangeHandler = (event) => {
     const name = event.target.name;
     const value = event.target.value;
-    setData((data) => ({ ...data, [name]: value }));
+    // If state changes, reset city
+    if (name === "state") {
+      setData((data) => ({ ...data, state: value, city: "" }));
+    } else {
+      setData((data) => ({ ...data, [name]: value }));
+    }
   };
 
   const onSubmitHandler = async (event) => {
@@ -292,7 +376,11 @@ const PlaceOrder = () => {
                     onChange={onChangeHandler}
                   >
                     <option value="">Choose...</option>
-                    <option>Karnataka</option>
+                    {STATES.map((s) => (
+                      <option key={s} value={s}>
+                        {s}
+                      </option>
+                    ))}
                   </select>
                 </div>
 
@@ -309,7 +397,11 @@ const PlaceOrder = () => {
                     onChange={onChangeHandler}
                   >
                     <option value="">Choose...</option>
-                    <option>Banglore</option>
+                    {(CITIES[data.state] || []).map((c) => (
+                      <option key={c} value={c}>
+                        {c}
+                      </option>
+                    ))}
                   </select>
                 </div>
 
