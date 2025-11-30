@@ -6,6 +6,7 @@ import { calculateCartTotals } from "../../util/cartUtils";
 import { toast } from "react-toastify";
 import { RAZORPAY_KEY } from "../../util/contants";
 import { useNavigate } from "react-router-dom";
+import { STATES, CITIES } from "../../util/locations";
 import {
   createOrder,
   deleteOrder,
@@ -28,8 +29,6 @@ const PlaceOrder = () => {
     city: "",
     zip: "",
   });
-
-import { STATES, CITIES } from "../../util/locations";
 
   const onChangeHandler = (event) => {
     const name = event.target.name;
