@@ -58,7 +58,8 @@ public class SecurityConfig {
         return new CorsFilter(corsConfigurationSource());
     }
 
-    private UrlBasedCorsConfigurationSource corsConfigurationSource() {
+    @Bean
+    public UrlBasedCorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
         String allowed = env.getProperty("CORS_ALLOWED_ORIGINS");
         if (allowed != null && !allowed.isBlank()) {
@@ -67,13 +68,19 @@ public class SecurityConfig {
                     .filter(s -> !s.isEmpty())
                     .collect(Collectors.toList());
             config.setAllowedOrigins(origins);
+            // If explicit origins are configured, allow credentials
+            config.setAllowCredentials(true);
         } else {
             // Default: allow any origin pattern (useful for preview environments).
+            // Use origin patterns so Spring will echo the request Origin back
+            // (avoids literal '*' when specific origin is required).
             config.setAllowedOriginPatterns(List.of("*"));
         }
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         config.setAllowedHeaders(List.of("Authorization", "Content-Type", "*"));
-        config.setAllowCredentials(true);
+        // When using wildcard origin patterns it's safer to disable credentials by default.
+        // If explicit origins are not set, keep credentials disabled to avoid wildcard+credentials issues.
+        config.setAllowCredentials(false);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);

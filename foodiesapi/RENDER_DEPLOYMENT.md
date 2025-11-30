@@ -41,6 +41,38 @@ RAZORPAY_KEY=your_razorpay_key
 RAZORPAY_SECRET=your_razorpay_secret
 ```
 
+### CORS (Cross-Origin Resource Sharing)
+
+If your frontend is hosted on a different origin (for example Vercel), you must configure allowed origins so browsers will accept responses from this API.
+
+- **Environment variable**: `CORS_ALLOWED_ORIGINS`
+- **Format**: comma-separated origin list (no spaces required). Example:
+
+```
+CORS_ALLOWED_ORIGINS=https://food-delivery-application-hazel.vercel.app,https://localhost:5173
+```
+
+- If `CORS_ALLOWED_ORIGINS` is set to an explicit list, the server will echo those origins and allow credentials (cookies/authorization) as needed.
+- If `CORS_ALLOWED_ORIGINS` is not set, the server will fall back to a permissive origin pattern for previews but will not allow credentials.
+
+To verify CORS headers after deployment, run these commands from your machine:
+
+```bash
+# Check GET response headers include Access-Control-Allow-Origin
+curl -i -H "Origin: https://food-delivery-application-hazel.vercel.app" \
+  https://<your-render-url>/api/foods
+
+# Check preflight (OPTIONS) response
+curl -i -X OPTIONS \
+  -H "Origin: https://food-delivery-application-hazel.vercel.app" \
+  -H "Access-Control-Request-Method: GET" \
+  -H "Access-Control-Request-Headers: Authorization,Content-Type" \
+  https://<your-render-url>/api/foods
+```
+
+Replace `https://<your-render-url>` with your actual Render service URL (e.g. `https://food-delivery-application-h2vx.onrender.com`).
+
+
 **IMPORTANT**: Replace all values with actual credentials from your `.env` file.
 
 ### 4. Configure Port
